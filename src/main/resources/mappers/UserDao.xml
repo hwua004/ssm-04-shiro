@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hwua.ssm.dao.UserDao">
+    <select id="queryUserByName" parameterType="string" resultType="user">
+        select * from user where username like CONCAT('%',#{value},'%')
+    </select>
+
+    <select id="queryUserByNameAndPwd" resultType="user">
+        select * from user where username=#{arg0} and password=#{arg1}
+    </select>
+
+    <update id="updatePwd" >
+        update user set password=#{arg1} where username = #{arg0}
+    </update>
+
+    <select id="queryUser" parameterType="user" resultType="map">
+        select * from user where 1 = 1
+        <if test="username!=null and username!=''">
+            and username like CONCAT('%',#{username},'%')
+        </if>
+        <if test="realname!=null and realname!=''">
+            and realname like CONCAT('%',#{realname},'%')
+        </if>
+        <if test="phone!=null and phone!=''">
+            and phone like CONCAT('%',#{phone},'%')
+        </if>
+        <if test="email!=null and email!=''">
+            and email like CONCAT('%',#{email},'%')
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{stauts}
+        </if>
+    </select>
+
+    <insert id="addUser" parameterType="user">
+        insert into user values(null,#{username},#{password},#{realname},#{phone},
+        #{email},#{status})
+    </insert>
+    <update id="updateUser" parameterType="user">
+        update user set username=#{username},realname=#{realname},phone=#{phone},
+        email=#{email},status=#{status} where id = #{id}
+    </update>
+
+    <delete id="deleteRoleByUserId" parameterType="int">
+        delete from user_role where userid = #{value}
+    </delete>
+
+    <insert id="saveUserAndRole" parameterType="list">
+        <if test="list!=null and list.size>0">
+            insert into user_role values
+            <foreach collection="list" item="row" open=" " close=" " separator=",">
+                (null,#{row.userid},#{row.roleid})
+            </foreach>
+        </if>
+    </insert>
+
+    <select id="queryMenuByUserId" parameterType="int" resultType="map">
+        select distinct authid,a.* ,
+        authname as text
+         from role_auth ra
+        left join auth a on a.id = ra.authid
+        where roleid in (
+        select roleid from user_role ur
+        left join role r on r.id = ur.roleid
+        where userid = #{value} and r.status='1'
+        ) and a.status ='1' and a.type ='1'
+    </select>
+
+    <select id="queryUrlByUserId" parameterType="int" resultType="string">
+        select distinct a.url
+         from role_auth ra
+        left join auth a on a.id = ra.authid
+        where roleid in (
+        select roleid from user_role ur
+        left join role r on r.id = ur.roleid
+        where userid = #{value} and r.status='1'
+        ) and a.status ='1'
+    </select>
+
+    <select id="queryCodeByUserId" parameterType="int" resultType="string">
+        select distinct a.authcode
+         from role_auth ra
+        left join auth a on a.id = ra.authid
+        where roleid in (
+        select roleid from user_role ur
+        left join role r on r.id = ur.roleid
+        where userid = #{value} and r.status='1'
+        ) and a.status ='1'
+    </select>
+
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 声明cacheManager -->
+    <bean id="cacheManagerShiro"
+          class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManager" ref="cache"/>
+    </bean>
+    
+    <bean id="customerRealm" class="com.hwua.ssm.realm.CustomerRealm2">
+        <!--<property name="cacheManager" ref="cacheManagerShiro"/>-->
+        <property name="credentialsMatcher" >
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="MD5"/>
+                <property name="hashIterations" value="64"/>
+            </bean>
+        </property>
+
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="cacheManager" ref="cacheManagerShiro"/>
+        <property name="realm" ref="customerRealm"/>
+    </bean>
+
+    <!--web.xml中filter对应的bean-->
+    <!--id必须和web.xml文件中的shiro的filter的filter-name标签的值一样-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <!--配置登录页面的位置，在没有经过认证的情况下，将会访问这个地址让你去认证-->
+        <property name="loginUrl" value="/login.jsp"/>
+        <!--用于指定没权限操作时的页面-->
+        <property name="unauthorizedUrl" value="/noauth.jsp"/>
+        <!--哪些页面需要被保护，
+            以及访问这些页面需要的权限
+            =anon 任何人都可以访问
+            =authc 经过认证之后才可以访问
+            没有被配置的页面是可以访问的
+        -->
+        <property name="filterChainDefinitions">
+            <value>
+                /login.jsp = anon
+                /user/login = anon
+                /static/** = anon
+                /noauth.jsp = anon
+                <!-- 退出拦截，请求/user/logout执行退出操作,
+                这个地址可以没有对应的controller -->
+                /user/logout = logout
+                <!--/user/manage = roles[userManage],authc-->
+                /** = authc
+            </value>
+        </property>
+    </bean>
+
+    <!-- 开启aop，对类代理 -->
+    <aop:config expose-proxy="true"/>
+
+
+
+
+
+</beans>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hwua.ssm.dao.AuthDao">
+
+    <select id="queryAllAuth" resultType="map">
+        select * , pid as _parentId from auth
+    </select>
+
+    <insert id="addAuth" parameterType="auth">
+        insert into auth values(null,#{pid},#{authname},#{authcode},#{type},
+        #{url},#{status},#{orders})
+    </insert>
+
+    <update id="updateAuth" parameterType="auth">
+        update auth set authname=#{authname},authcode=#{authcode},type=#{type},
+        url=#{url},status=#{status},orders=#{orders} where id=#{id}
+    </update>
+
+    <select id="queryAuthByName" parameterType="string" resultType="auth">
+        select * from auth where authname = #{value}
+    </select>
+
+
+
+
+</mapper>

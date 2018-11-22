@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hwua.ssm.dao.RoleDao">
+
+    <select id="queryRole" parameterType="role" resultType="map">
+        select * from role where  1 = 1
+        <if test="rolename!=null and rolename!=''">
+            and rolename like CONCAT('%',#{rolename},'%')
+        </if>
+        <if test="rolecode!=null and rolecode!=''">
+            and rolecode like CONCAT('%',#{rolecode},'%')
+        </if>
+        <if test="status!=null and status!=''">
+            and status = #{status}
+        </if>
+        order by orders desc
+    </select>
+
+    <insert id="addRole" parameterType="role">
+        insert into role values(null,#{rolename},#{rolecode},#{status},#{orders})
+    </insert>
+
+    <update id="updateRole" parameterType="role">
+        update role set rolename=#{rolename},rolecode=#{rolecode},
+        status=#{status},orders=#{orders} where id = #{id}
+    </update>
+
+    <select id="queryRoleByName" parameterType="string" resultType="role">
+        select * from role where rolename = #{value}
+    </select>
+
+    <select id="queryValidAuth" resultType="map">
+        select * ,authname as text  from auth where status = '1'
+    </select>
+
+    <select id="queryAuthByRoleId" parameterType="int" resultType="int">
+      select authid from role_auth where roleid = #{value}
+    </select>
+
+    <delete id="delAuthByRoleId" parameterType="int">
+        delete from role_auth where roleid = #{value}
+    </delete>
+
+    <insert id="addRoleAndAuth" parameterType="list">
+        <if test="list!=null and list.size>0">
+            insert into role_auth values
+            <foreach collection="list" item="row" open=" " close=" " separator=",">
+                (null,#{row.roleid},#{row.authid})
+            </foreach>
+        </if>
+    </insert>
+
+    <select id="queryValidRole" parameterType="int" resultType="map">
+        select * from role where status = '1'
+    </select>
+
+    <select id="queryRoleByUserId" parameterType="int" resultType="int">
+        select roleid from user_role where userid = #{value}
+    </select>
+
+</mapper>
