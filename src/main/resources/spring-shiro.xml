@@ -10,7 +10,7 @@
     <!-- 声明cacheManager -->
     <bean id="cacheManagerShiro"
           class="org.apache.shiro.cache.ehcache.EhCacheManager">
-        <property name="cacheManager" ref="cache"/>
+        <property name="cacheManager" ref="ehCacheManagerFactoryBean"/>
     </bean>
     
     <bean id="customerRealm" class="com.hwua.ssm.realm.CustomerRealm2">

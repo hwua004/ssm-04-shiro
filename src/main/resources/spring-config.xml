@@ -59,21 +59,25 @@
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
 
-    <!--注册CacheManagerFactory-->
-    <bean id="cache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+    <!--注册CacheManagerFactory,保留ehcache的缓存管理器，专门给shiro使用-->
+    <bean id="ehCacheManagerFactoryBean" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="classpath:ehcache.xml"/>
     </bean>
     <!--注册一个cacheManager-->
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="cache"/>
+    <bean id="ehCacheCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="ehCacheManagerFactoryBean"/>
+    </bean>
+    <!--使用redis作为cacheManager-->
+    <bean id="rediscacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
+        <constructor-arg name="redisOperations" ref="redisTemplate"/>
     </bean>
     <!--开启注解的方式来控制缓存@Cacheable @Cacheput @CacheEvict-->
-    <cache:annotation-driven cache-manager="cacheManager"/>
+    <cache:annotation-driven cache-manager="rediscacheManager"/>
 
 
 
     <!--引入其他的配置文件-->
     <import resource="classpath:spring-shiro.xml"/>
-
+    <import resource="classpath:spring-redis.xml"/>
 
 </beans>

@@ -1,0 +1,6 @@
+ssm-shiro项目升级需求：
+1、整合redis。使用redis作为缓存
+2、要求有一个超级管理员，
+用户名为superadmin
+角色为superadmin，要求superadmin默认具有全部权限
+整个系统中，只有superadmin才能修改【角色管理】，【权限管理】模块
