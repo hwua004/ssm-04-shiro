@@ -68,11 +68,11 @@
         <property name="cacheManager" ref="ehCacheManagerFactoryBean"/>
     </bean>
     <!--使用redis作为cacheManager-->
-    <bean id="rediscacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
+    <bean id="redisCacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
         <constructor-arg name="redisOperations" ref="redisTemplate"/>
     </bean>
     <!--开启注解的方式来控制缓存@Cacheable @Cacheput @CacheEvict-->
-    <cache:annotation-driven cache-manager="rediscacheManager"/>
+    <cache:annotation-driven cache-manager="redisCacheManager"/>
 
 
 
