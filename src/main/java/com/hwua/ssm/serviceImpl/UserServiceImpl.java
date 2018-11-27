@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    //@Cacheable(value="my",key = "'user'+#name")
+    @Cacheable(value="my",key = "'user'+#name")
     public User queryUserByName(String name) {
         return userDao.queryUserByName(name);
     }

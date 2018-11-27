@@ -1,0 +1,7 @@
+在该项目中，有使用jul做日志的，有用jcl做日志的，也有用log4j做日志的
+目的是把所有的日志输出统一到slf4j和logback上
+首先，要引入slf4j-api和logback-classic和logback-core
+还得引入jcl-over-slf4j、log4j-over-slf4j、jul-to-slf4j
+然后去掉之前引入的log4j和slf4j-log4j12
+然后需要引入的是slf4j-ext-spring
+然后在web.xml中引入LogbackConfigListener
